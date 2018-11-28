@@ -11,10 +11,6 @@ class P3RGB64x32MatrixPanel : public Adafruit_GFX {
       : Adafruit_GFX(64, 32), pinR1(_pinR1), pinG1(_pinG1), pinB1(_pinB1), pinR2(_pinR2), pinG2(_pinG2), pinB2(_pinB2), pinCLK(_pinCLK), pinLAT(_pinLAT), pinOE(_pinOE), pinA(_pinA), pinB(_pinB), pinC(_pinC), pinD(_pinD), doubleBuffer(_doubleBuffer) {
       initMatrixBuff();
     }
-    P3RGB64x32MatrixPanel(bool _doubleBuffer = false)
-      : Adafruit_GFX(64, 32), doubleBuffer(_doubleBuffer) {
-      initMatrixBuff();
-    }
     void begin(void);
     void stop(void);
     virtual void drawPixel(int16_t x, int16_t y, uint16_t color);
@@ -49,6 +45,7 @@ class P3RGB64x32MatrixPanel : public Adafruit_GFX {
     }
     static void onTimer(void);
     void draw();
+    void test();
 
     uint16_t* drawBuffer() {
       if (!doubleBuffer) return _matrixbuff[0].data();
@@ -57,22 +54,21 @@ class P3RGB64x32MatrixPanel : public Adafruit_GFX {
       else
         return _matrixbuff[0].data();
     }
+    uint8_t pinR1;
+    uint8_t pinG1;
+    uint8_t pinB1;
+    uint8_t pinR2;
+    uint8_t pinG2;
+    uint8_t pinB2;
 
-    uint8_t pinR1 = 25;
-    uint8_t pinG1 = 26;
-    uint8_t pinB1 = 27;
-    uint8_t pinR2 = 21;
-    uint8_t pinG2 = 22;
-    uint8_t pinB2 = 23;
+    uint8_t pinCLK;
+    uint8_t pinLAT;
+    uint8_t pinOE;
 
-    uint8_t pinCLK = 15;
-    uint8_t pinLAT = 32;
-    uint8_t pinOE = 33;
-
-    uint8_t pinA = 12;
-    uint8_t pinB = 16;
-    uint8_t pinC = 17;
-    uint8_t pinD = 18;
+    uint8_t pinA;
+    uint8_t pinB;
+    uint8_t pinC;
+    uint8_t pinD;
 
     bool doubleBuffer;
     static HardwareTimer timer;

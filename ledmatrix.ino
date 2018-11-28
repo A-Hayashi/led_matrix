@@ -105,10 +105,18 @@ void loop() {
 
 void i2c_init()
 {
-  Wire.begin(0x20) ;                 // Ｉ２Ｃの初期化、自アドレスを15とする
+  Wire.begin(0x20) ;                 // Ｉ２Ｃの初期化、自アドレスを0x20とする
   Wire.onRequest(requestEvent);     // マスタからのデータ取得要求のコールバック関数登録
   Wire.onReceive(receiveEvent);     // マスタからのデータ送信対応のコールバック関数登録
 }
+
+enum {
+  cmd_print = 0x01,
+  cmd_setCursor,
+  cmd_fillRect,
+  cmd_setTextSize,
+  cmd_setTextColor
+};
 
 void receiveEvent(int howMany) {
   Serial.println("receiveEvent");
@@ -116,18 +124,18 @@ void receiveEvent(int howMany) {
   Serial.print("cmd:");
   Serial.println(cmd);
 
-  if (cmd == 0x01) {
+  if (cmd == cmd_print) {
     if (howMany > 1) {
       char buff[100];
       for (int i = 0; i < howMany - 1; i++) {
         buff[i] = Wire.read();
       }
-      matrix.println(buff);
-      Serial.println(buff);
+      matrix.print(buff);
+      Serial.print(buff);
     }
   }
 
-  if (cmd == 0x02) {
+  if (cmd == cmd_setCursor) {
     if (howMany == 3) {
       byte x = Wire.read();
       byte y = Wire.read();
@@ -139,7 +147,7 @@ void receiveEvent(int howMany) {
     }
   }
 
-  if (cmd == 0x03) {
+  if (cmd == cmd_fillRect) {
     if (howMany == 8) {
       byte x = Wire.read();
       byte y = Wire.read();
@@ -164,6 +172,25 @@ void receiveEvent(int howMany) {
       Serial.print(", ");
       Serial.print(b);
       Serial.println(", ");
+    }
+  }
+
+  if (cmd == cmd_setTextSize) {
+    if (howMany == 2) {
+      byte size = Wire.read();
+      matrix.setTextSize(size);
+      Serial.print("setTextSize ");
+      Serial.println(size);
+    }
+  }
+
+  if (cmd == cmd_setTextColor) {
+    if (howMany == 3) {
+      uint16_t color = Wire.read();
+      color |= Wire.read() << 8;
+      matrix.setTextColor(color);
+      Serial.print("setTextColor ");
+      Serial.println(color);
     }
   }
 }

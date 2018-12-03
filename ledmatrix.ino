@@ -185,12 +185,17 @@ void receiveEvent(int howMany) {
   }
 
   if (cmd == cmd_setTextColor) {
-    if (howMany == 3) {
-      uint16_t color = Wire.read();
-      color |= Wire.read() << 8;
-      matrix.setTextColor(color);
+    if (howMany == 4) {
+      byte r = Wire.read();
+      byte g = Wire.read();
+      byte b = Wire.read();
+      matrix.setTextColor(matrix.color444(r, g, b));
       Serial.print("setTextColor ");
-      Serial.println(color);
+      Serial.print(r);
+      Serial.print(", ");
+      Serial.print(g);
+      Serial.print(", ");
+      Serial.println(b);
     }
   }
 }
